@@ -2,21 +2,30 @@ import math
 import numpy as np
 
 def rad(x):
+    x = float(x)
     return x * math.pi/180
 def deg(x):
+    x= float(x)
     return x * 180 / math.pi
 def degtohr(x):
     e1 = int(x/15)
     e2 = int((x/15 - int(x/15)) * 60)
     e3 = 60 * (((x/15 - int(x/15)) * 60) - int((x/15 - int(x/15)) * 60))
     return str(e1) + ":" + str(e2) + ":" + str(e3)
+def dectodeg(x):
+    e1 = int(x)
+    e2 = int((x - int(x)) * 60)
+    e3 = 60 * (((x - int(x)) * 60) - int((x - int(x)) * 60))
+    return str(e1) + ":" + str(e2) + ":" + str(e3)
+
+
 ee = rad(23.4358)
 e = 0.6587595515873473
 a = 3.092704185336301
 I = rad(11.74759239647092)
 h = rad(82.15763948051409)
 w = rad(356.34109239)
-m0 = 0.01246738682149958
+m0 = rad(0.01246738682149958)
 t0 = 2458465.5
 t = 2458668.5
 mu = .01720209895
@@ -25,14 +34,15 @@ m = m0 + n*(t - t0)
 
 def solvekep(M):
     Eguess = M
-    Mguess = Eguess - e* math.sin(Eguess)
-    Mtrue = M
-    while abs(Mguess - Mtrue) > 1e-4:
-        Mguess = Eguess - e*math.sin(Eguess)
-        Eguess = Mguess + e*math.sin(Eguess)
+    Eguess = Eguess - e*math.sin(Eguess)
+    prevE = M
+    while abs(Eguess - prevE) > 1e-4:
+        prevE = Eguess
+        Eguess = M + e*math.sin(Eguess)
     return Eguess
+
 def ephemeris(e, a, I, h, w,m0, t0, t):
-        
+    print(m)
     E = solvekep(m)
     print(E)
     x = a*(math.cos(E) - e)
@@ -68,7 +78,7 @@ def ephemeris(e, a, I, h, w,m0, t0, t):
 
     dfinal = math.asin(rZ)
     afinal = math.atan2(rY,rX)
-    print(deg(dfinal))
+    print(dectodeg(deg(dfinal)))
     print(degtohr(deg(afinal)))
     return deg(dfinal), degtohr(deg(afinal))
 
