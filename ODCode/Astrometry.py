@@ -38,15 +38,18 @@ arrcentroidX = []
 arrcentroidY = []
 
 
-im = fits.getdata('Aligned_reduced0000.fits')
+im = fits.getdata('june18.fits')
 #im = fits.getdata('jaiden.fits')
 image = np.array(im)
 
 #parsing raw input into respective lists
-for line in open('row.txt.txt','r'):
+for line in open('june18starter.txt','r'):
+    line = line.strip("\n")
     arrline = line.split(" ")
-    arrRA.append(RAtoDegree(arrline[0]))
-    arrDEC.append(DtoDegree(arrline[1]))
+
+    #print(arrline)
+    arrRA.append(float(arrline[0]))
+    arrDEC.append(float(arrline[1]))
     arrX.append(arrline[2])
     arrY.append(arrline[3])
 
@@ -68,7 +71,7 @@ for i in range(len(arrX)):
 astX, astY = centroid(astX,astY, radius2,image)
 
 #performing LSPR
-LSPR2(arrRA, arrDEC, arrcentroidX, arrcentroidY, astX, astY)
+print(LSPR2(arrRA, arrDEC, arrcentroidX, arrcentroidY, astX, astY))
 #LSPR2(arrRA, arrDEC, arrX, arrY, 813.4701022025868, 449.373471013335)
 
 

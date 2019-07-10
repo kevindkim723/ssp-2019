@@ -111,3 +111,5 @@ def LSPR(filename, x, y):
     print(uncertaintyD)
     return b1,b2,a11,a12,a21,a22,RA,D,uncertaintyRA,uncertaintyD
 
+print(LSPR(":+", 484.35,382.62))
+

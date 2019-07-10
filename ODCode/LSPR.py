@@ -19,7 +19,11 @@ def DtoDegree(sD):
         else:
             sDeg = sDeg + float(arr[i])/(60**i)
     return sDeg
-
+def degtohr(x):
+    e1 = int(x/15)
+    e2 = int((x/15 - int(x/15)) * 60)
+    e3 = 60 * (((x/15 - int(x/15)) * 60) - int((x/15 - int(x/15)) * 60))
+    return str(e1) + ":" + str(e2) + ":" + str(e3)
 def LSPR(filename, x, y):
     #defining the arrays that will contain parsed values
     arrX = []
@@ -98,7 +102,7 @@ def LSPR(filename, x, y):
     RA = b1 + a11*x + a12 * y
     D = b2 + a21*x + a22*y
 
-    print("RA: ", RA)
+    print("RA: ", degtohr(RA))
     print("D: ", D)
 
     arrFitRA = np.array(np.dot(a11, arrX) + np.dot(a12,arrY)) + b1
@@ -149,25 +153,20 @@ def LSPR2(arrRA, arrD, arrX, arrY,x,y):
 
 
     #matrix operations to find RA and D
-
-
-    
-##    print("b1: ", b1)
-##    print("b2: ", b2)
-##    print("a11: ", a11)
-##    print("a12: ", a12)
-##    print("a21: ", a21)
-##    print("a22: ", a22)
-##    print(sum_x)
-##    print(sum_y)
-##    print(sum_RA)
-##    print(sum_D)
+   
+    print("b1: ", b1)
+    print("b2: ", b2)
+    print("a11: ", a11)
+    print("a12: ", a12)
+    print("a21: ", a21)
+    print("a22: ", a22)
+   
 
     RA = b1 + a11*x + a12 * y
     D = b2 + a21*x + a22*y
 
-##    print("RA: ", RA)
-##    print("D: ", D)
+    print("RA: ", degtohr(RA))
+    print("D: ", D)
 
     arrFitRA = np.array(np.dot(a11, arrX) + np.dot(a12,arrY)) + b1
     arrFitD = np.array(np.dot(a21, arrX) + np.dot(a22,arrY)) + b2
@@ -175,6 +174,6 @@ def LSPR2(arrRA, arrD, arrX, arrY,x,y):
     uncertaintyRA = math.sqrt(1/(n-3) * np.linalg.norm(arrRA - arrFitRA)**2) * 3600
     uncertaintyD = math.sqrt(1/(n-3) * np.linalg.norm(arrD - arrFitD)**2) * 3600
 
-##    print("uncertaintyRA:" , uncertaintyRA)
-##    print("uncertaintyD: " , uncertaintyD)
+    print("uncertaintyRA:" , uncertaintyRA)
+    print("uncertaintyD: " , uncertaintyD)
     return b1,b2,a11,a12,a21,a22,RA,D,uncertaintyRA,uncertaintyD
