@@ -38,17 +38,16 @@ def skybackground(x, y, r1, r2, m,inclusive): #pixel exclusive, calculates backg
     print(len(m))
     for row in range(length):
         for column in range(length):
-            x = column - r -.5
-            y = r + .5 - row
+            x = column - r2 -.5
+            y = r2 + .5 - row
             if (pixelType(x,y,r1) == 1 and pixelType(x,y,r2) == -1):
-                #arrSky.append(m[row][column])
+                arrSky.append(m[row][column])
                 m[row][column] = 10000
     #print(m)
-   
-    print("mean: ", np.mean(arrSky))
-    plt.imshow(m)
-    plt.show()
-    return np.mean(arrSky)
+    print(len(arrSky))
+    pltprint(m)
+    #print("mean: ", np.mean(arrSky))
+ 
     
 def centroid(x,y,r,m,inclusive):
     length = 2*r+1
@@ -61,8 +60,8 @@ def centroid(x,y,r,m,inclusive):
             if (pixelType(x,y,r) == 0):
                 m[row][column] = 0
     pltprint(m)
-centroid(489,292,10,matrix,True)
+#centroid(489,292,10,matrix,True)
 
-#skybackground(490,293,5,20,matrix,True)
+skybackground(490,293,8,13,matrix,True)
     
 
