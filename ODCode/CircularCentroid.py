@@ -28,19 +28,19 @@ def centroid(x, y, r, m):
     arrY = []
     meanX = 0
     meanY = 0
-    m = m[y-r:y+r+1, x-r:x+r+1]
+    matrix = m[y-r:y+r+1, x-r:x+r+1]
 
     for row in range(length):
         for column in range(length):
             xcoord = column - r -.5
             ycoord = r + .5 - row
             if (pixelType(xcoord,ycoord,r)==1):
-                m[row][column] = 0
+                matrix[row][column] = 0
  
     for row in range(length):
-        arrY.append(np.sum(m[row ,0:length]))
+        arrY.append(np.sum(matrix[row ,0:length]))
     for column in range(length):
-        arrX.append(np.sum(m[0: length, column]))
+        arrX.append(np.sum(matrix[0: length, column]))
     for v in range(len(arrX)):
         meanX += arrX[v] * (v + x-r)
     for v in range(len(arrY)):
