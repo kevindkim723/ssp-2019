@@ -73,6 +73,7 @@ astX, astY = centroid(astX,astY, radius2,image)
 #performing LSPR
 print(LSPR2(arrRA, arrDEC, arrcentroidX, arrcentroidY, astX, astY))
 #LSPR2(arrRA, arrDEC, arrX, arrY, 813.4701022025868, 449.373471013335)
+def Astrometry(filename, 
 
     
     

@@ -57,7 +57,6 @@ def aperture(x,y,r,m,inclusive):
             y = r + .5 - row
             if (inclusive):
                 if (pixelType(x,y,r) == -1 or pixelType(x,y,r) == 0):
-
                     sumVal += matrix[row][column]
                     numPix += 1
             else:
@@ -90,7 +89,7 @@ def photometry(filename, x,y,aprad,anrad1, anrad2, inclusive):
     
 
 
-photometry("aptest.FIT",92,284,3,5,10,True)
+photometry("aptest.FIT",490,293,5,8,13,False)
     
     
 
