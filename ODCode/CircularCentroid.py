@@ -20,7 +20,7 @@ def pixelType(x,y,r):
     if (counter == 0): # coutner = 0 implies that all four courners of the pixel are outside the radius--> must be outside aperture
         return 1
     return 0 # counter not equaling 4 or 0 means that it is a border pixel, as some corners are outside the radius and some corners are inside the radius.
-def centroid(x, y, r, m):
+def centroid(x, y, r, m, inclusive):
     x = int(float(x))
     y = int(float(y))
     length = 2*r+1
@@ -34,8 +34,13 @@ def centroid(x, y, r, m):
         for column in range(length):
             xcoord = column - r -.5
             ycoord = r + .5 - row
-            if (pixelType(xcoord,ycoord,r)==1):
-                matrix[row][column] = 0
+            if (inclusive):
+                if (pixelType(xcoord,ycoord,r)==1 or pixelType(xcoord,ycoord,r) == 0):
+                    matrix[row][column] = 0
+            else:
+                if (pixelType(xcoord,ycoord,r)==1):
+                    matrix[row][column] = 0
+           
  
     for row in range(length):
         arrY.append(np.sum(matrix[row ,0:length]))
@@ -54,4 +59,4 @@ def centroid(x, y, r, m):
          
     return meanX, meanY
  
-print(centroid(200,200,10,image))
+#print(centroid(200,200,10,image))

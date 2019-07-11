@@ -24,6 +24,12 @@ def degtohr(x):
     e2 = int((x/15 - int(x/15)) * 60)
     e3 = 60 * (((x/15 - int(x/15)) * 60) - int((x/15 - int(x/15)) * 60))
     return str(e1) + ":" + str(e2) + ":" + str(e3)
+def dectodeg(x):
+    e1 = int(x)
+    e2 = int((x - int(x)) * 60)
+    e3 = 60 * (((x - int(x)) * 60) - int((x - int(x)) * 60))
+    return str(e1) + ":" + str(e2) + ":" + str(e3)
+
 def LSPR(filename, x, y):
     #defining the arrays that will contain parsed values
     arrX = []
@@ -166,7 +172,7 @@ def LSPR2(arrRA, arrD, arrX, arrY,x,y):
     D = b2 + a21*x + a22*y
 
     print("RA: ", degtohr(RA))
-    print("D: ", D)
+    print("D: ", dectodeg(D))
 
     arrFitRA = np.array(np.dot(a11, arrX) + np.dot(a12,arrY)) + b1
     arrFitD = np.array(np.dot(a21, arrX) + np.dot(a22,arrY)) + b2
@@ -176,4 +182,4 @@ def LSPR2(arrRA, arrD, arrX, arrY,x,y):
 
     print("uncertaintyRA:" , uncertaintyRA)
     print("uncertaintyD: " , uncertaintyD)
-    return b1,b2,a11,a12,a21,a22,RA,D,uncertaintyRA,uncertaintyD
+    return b1,b2,a11,a12,a21,a22,degtohr(RA),dectodeg(D),uncertaintyRA,uncertaintyD
