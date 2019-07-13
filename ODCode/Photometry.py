@@ -39,11 +39,8 @@ def skybackground(x, y, r1, r2, matrix): #pixel inclusive, calculates background
             y = r2 + .5 - row
             if (pixelType(x,y,r1) == 1 and pixelType(x,y,r2) == -1):
                 arrSky.append(m[row][column])
-  
-##    print(len(arrSky))
-##    pltprint(m)
+
     return np.sum(arrSky)/len(arrSky) ,  len(arrSky)
-    #print("mean: ", np.mean(arrSky))
  
  
 def aperture(x,y,r,m,inclusive):
@@ -81,16 +78,23 @@ def photometry(filename, x,y,aprad,anrad1, anrad2, inclusive):
     SNR = math.sqrt(signal* GAIN) / math.sqrt(1 + nAP*(1+nAP/nAN)*((avgSky * GAIN + DARK + READ ** 2 + GAIN**2/12)/(signal*GAIN)))
     instmag = -2.5* math.log10(signal)
     instuncertainty = 1.0857/SNR
-    print("Signal = ", signal)
-    print("SNR = ", SNR)
-    print("inst mag = ", instmag, " +/- ", instuncertainty)
+    return signal, instmag, instuncertainty
     
     
     
+    
+def main():
+    filename = input("Enter filename: ")
+    x = input("x: ")
+    y = input("y: ")
+    aprad = input("aperture radius: ")
+    anrad1 = input("annulus inner radius: ")
+    anrad2 = input("annulus outer radius: ")
+    print("Signal, instmag, instuncertainty: ", photometry("testfiles/aptest.FIT",92,284,3,5,10,True))
+#main()
+
     
 
-
-photometry("aptest.FIT",92,284,3,5,10,True)
     
     
 
