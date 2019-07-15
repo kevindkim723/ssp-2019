@@ -19,7 +19,7 @@ def interceptError(arrX, sloperror):
     return sloperror * sqrt(sumXsq/(n*np.dot(arrX,arrX)))
     
 
-def PhotometricData(starterfile, imgfile, astinstmag):
+def PhotometricData(starterfile, imgfile):
     configureplot("m instrumental", "Vmag", "Vmag vs m instrumental")
 
     arrX = []
@@ -28,7 +28,16 @@ def PhotometricData(starterfile, imgfile, astinstmag):
     arrVmag = []
     for line in open(starterfile,'r'):
         if ("#" in line):
-            continue;
+            line = line.strip("#")
+            arrline = line.split(" ")
+            x = (int(arrline[0]))
+            y = (int(arrline[1]))
+            aprad = int(arrline[2])
+            anrad1 = int(arrline[3])
+            anrad2 = int(arrline[4])
+            Vmag = (float(arrline[5]))
+            astinstmag = photometry(imgfile,x,y,aprad,anrad1,anrad2, True)[1]
+            continue
         line = line.strip("\n")
         arrline = line.split(" ")
         x = (int(arrline[0]))
@@ -73,7 +82,7 @@ def configureplot(xlabel, ylabel, title):
 
 
     
-PhotometricData("files/june18pstarter.txt", "files/june18.fits", )
+PhotometricData("files/june18pstarter.txt", "files/june18.fits")
 
     
     
