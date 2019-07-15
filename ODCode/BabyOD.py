@@ -118,10 +118,6 @@ babyOD([0.11507222713443244, -1.123393746613972, 0.09102871066613388]
 
 
 
-
-
-
-
 def geta2(rvec, rvecdot):
     return (2/mag(rvec) - np.dot(rvecdot, rvecdot))**-1
 
@@ -210,6 +206,5 @@ def babyOD2(rvec, rvecdot, t):
     print("n = ", n)
     print("T = ", T)
     print("P = ", P)
-
 
 
