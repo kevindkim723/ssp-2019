@@ -17,7 +17,6 @@ def ecliptic(x):
     transform = np.array([[1,0,0],
                           [0,m.cos(EPSILON), m.sin(EPSILON)],
                           [0,-m.sin(EPSILON), m.cos(EPSILON)]])
-    print(np.dot(transform,x))
     return np.dot(transform, x)
 
 def geta(rvec, rvecdot):
