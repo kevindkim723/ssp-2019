@@ -6,6 +6,9 @@ EPSILON = radians(23.4358)
 C = 173.145
 #converts into julian date
 def convertJulian(year, month, date, hour, minute, second):
+    year = float(year)
+    month = float(month)
+    date = float(date)
     hour = float(hour)
     minute = float(minute)
     second = float(second)
@@ -59,6 +62,13 @@ print(RAtoDegree("14:36:38.97"))
 def mag(x):
     return np.linalg.norm(x)
 
+
+
+
+
+
+
+        
 #time 1-3 of observation
 t1 = 2458292.73631
 t2 = 2458309.74862
@@ -83,8 +93,26 @@ rho3hat = ecliptic(np.array([cos(ra3) * cos(dec3), sin(ra3) * cos(dec3), sin(dec
 R1 = np.array([-2.628087761997599E-02, 1.015991789539995E+00, -4.048203704214327E-05])
 R2 = np.array([-3.091168712431013E-01, 9.685301616433887E-01, -4.256535119031212E-05])
 R3 = np.array([-4.345237494735269E-01, 9.187388812811442E-01, -3.519915251166138E-05])
+t =[]
+ra = []
+dec = []
+R = []
 
 
+def feed(starterfile):
+     for line in open(starterfile,'r'):
+        line = line.strip("\n")
+        arrline = line.split(" ")
+        time = arrline[3].split(":")
+        t.append(convertJulian(arrline[0],arrline[1],arrline[2],time[0],time[1],time[2]))
+        ra.append(radians(RAtoDegree(arrline[4])))
+        dec.append(radians(DtoDegree(arrline[5])))
+        R.append(np.array([float(arrline[6]),float(arrline[7]),float(arrline[8])]))
+        
+        
+
+
+        
 #r vectors
 r1 = []
 r2 = []
@@ -220,9 +248,11 @@ def iterate(r2,r2dot):
     print("tau3: ", tau3)
 
     magprevr2 = mag(r2)
+    #constants for taylor polynomials
     u =  1 / mag(r2)**3
     z = np.dot(r2,r2dot)/mag(r2)**2
     q = np.dot(r2dot,r2dot)/(mag(r2)**2) - u
+
     #f functions are taylor series to the fourth degree
     f1 = 1 - u * tau1**2 /2 + (u*z * tau1**3)/2 + (3*u*q - 15*u*z**2+u**2) * (tau1**4)/24
     f3 = 1 - u * tau3**2 /2 + (u*z * tau3**3)/2 + (3*u*q - 15*u*z**2+u**2) * (tau3**4)/24
