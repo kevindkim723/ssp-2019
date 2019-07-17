@@ -28,12 +28,6 @@ def DtoDegree(sD):
 
 
 
-
-
-
-
-
-
 #LSPR2(arrRA, arrDEC, arrX, arrY, 813.4701022025868, 449.373471013335)
 def Astrometry(starterfile, imgfile, x,y, inclusive):
     #defining constants

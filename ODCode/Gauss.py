@@ -4,6 +4,14 @@ from BabyOD import *
 
 EPSILON = radians(23.4358)
 C = 173.145
+#converts into julian date
+def convertJulian(year, month, date, hour, minute, second):
+    hour = float(hour)
+    minute = float(minute)
+    second = float(second)
+    J = 367 * year -int(7*(year + int((month+9)/12))/4) + int(275*month/9) + date + 1721013.5
+    time = hour + minute/60 + second/3600
+    return J + time/24
 
 #helper method that converts equatorial vector into ecliptic vector
 def ecliptic(x):
@@ -12,15 +20,39 @@ def ecliptic(x):
                           [0,cos(EPSILON), sin(EPSILON)],
                           [0,-sin(EPSILON), cos(EPSILON)]])
     return np.dot(transform, x)
-
+#helper method to convert right acension into decimal degree
 def RAtoDegree(sRA):
     sDeg = 0
+    isnegative = False
     arr = sRA.split(":")
+    if ("-" in sRA):
+        isnegative = True
     for i in range(len(arr)):
         if i == 0:
             sDeg = sDeg + float(arr[i]) * 15
         else:
-            sDeg = sDeg + 360 * float(arr[i])/(24 * 60 ** i)
+            if (isnegative):
+                sDeg = sDeg - 360 * float(arr[i])/(24 * 60 ** i)
+            else:
+                sDeg = sDeg + 360 * float(arr[i])/(24 * 60 ** i)
+    return sDeg
+#helper method to convert sexagesimal to decimal degree
+def DtoDegree(sD):
+    sDeg = 0
+    arr = sD.split(": ")
+    isnegative = False
+    if ("-" in sD):
+        isnegative = True
+    for i in range(len(arr)):
+        if i == 0:
+            
+            sDeg = sDeg + float(arr[i]) 
+        else:
+            if (isnegative):
+                sDeg = sDeg - float(arr[i])/(60**i)
+
+            else:
+                sDeg = sDeg + float(arr[i])/(60**i)
     return sDeg
 print(RAtoDegree("14:36:38.97"))
 #helper method to return magnitude of vector
@@ -103,7 +135,7 @@ a = -(A**2 + A*E + F)
 print("a: ", a)
 b = -1 * (2*A*B + B * E)
 print("b: ", b)
-c = -1 **2 * B**2
+c = -1 * B**2
 
 polynomial = [1,0,a,0,0,b,0,0,c]
 roots = []
@@ -115,7 +147,7 @@ for r2 in np.roots(polynomial):
 print("SSS", roots)
 def firstiterate(r2mag):
     r2mag = float(r2mag)
-    global t1,t2,t3
+    global rho1,rho2,rho3
 
     tau1 = k * (t1 - t2)
     tau3 = k * (t3 - t2)
@@ -123,11 +155,15 @@ def firstiterate(r2mag):
    
     f1 = 1 - tau1**2/(2 * r2mag**3)
     f3 = 1 - tau3**2/(2*r2mag**3)
+    print("f1: ", f1)
+    print("f3: ", f3)
     
-
     #g functions are taylor series to third degree
     g1 = tau1 - tau1 **3 /(6*r2mag**3)
     g3 = tau3 - tau3 **3 /(6*r2mag**3)
+    print("g1: ", g1)
+    print("g3: ", g3)
+
 
     #defining scalars c and d
     c1 = g3/(f1*g3 - g1 * f3)
@@ -142,8 +178,12 @@ def firstiterate(r2mag):
     print("D0 first iteration: ", D0)
     print("D11 first iteration: ", D11)
     print("D12 first iteration: ", D12)
-    print("D1 first iteration: ", c2)
-    print("c2 first iteration: ", c2)
+    print("d1 first iteration: ", d1)
+    print("d3 first iteration: ", d3)
+    print("rhohat1: ", rho1hat)
+    print("rhohat2: ", rho2hat)
+    print("rhohat3: ", rho3hat)
+    
 
 
     rho1mag = (c1 * D11 + c2 * D12 + c3*D13)/(c1 * D0)
@@ -160,30 +200,36 @@ def firstiterate(r2mag):
     r3 = rho3 - R3
     r2dot = np.multiply(r1,d1) + np.multiply(d3,r3)
 
-    t1 = t1 - mag(rho1)/C
-    t2 = t2 - mag(rho2)/C
-    t3 = t3 - mag(rho3)/C
+    
     print("r2 1st iteratoin: ", r2)
     print("r2dotmag 1st iteration: ", r2dot)
     
     return r2,r2dot
 
 #finds proper r2 via taylor expansions of the f and g series
-def iterate(r2,r2dot,t1,t2,t3):
-    #global rho1,rho2,rho3
+def iterate(r2,r2dot):
+    global rho1,rho2,rho3
+    t1mod = t1 - mag(rho1)/C
+    t2mod = t2 - mag(rho2)/C
+    t3mod = t3 - mag(rho3)/C
     print("r2: ",r2)
     
-    tau1 = k * (t1 - t2)
-    tau3 = k * (t3 - t2)
-    
-    magprevr2 = mag(r2)
-    
-    f1 = 1 - tau1**2/(2 * mag(r2)**3) + np.dot(r2,r2dot) * tau1 ** 3/(2*mag(r2)**5)
-    f3 = 1 - tau3**2/(2*mag(r2)**3) + np.dot(r2,r2dot) * tau3 ** 3/(2*mag(r2)**5)
+    tau1 = k * ( t1mod - t2mod)
+    print("tau1: ", tau1)
+    tau3 = k * (t3mod - t2mod)
+    print("tau3: ", tau3)
 
-    #g functions are taylor series to third degree
-    g1 = tau1 - tau1**3 /(6*mag(r2)**3)
-    g3 = tau3 - tau3**3 /(6*mag(r2)**3)
+    magprevr2 = mag(r2)
+    u =  1 / mag(r2)**3
+    z = np.dot(r2,r2dot)/mag(r2)**2
+    q = np.dot(r2dot,r2dot)/(mag(r2)**2) - u
+    #f functions are taylor series to the fourth degree
+    f1 = 1 - u * tau1**2 /2 + (u*z * tau1**3)/2 + (3*u*q - 15*u*z**2+u**2) * (tau1**4)/24
+    f3 = 1 - u * tau3**2 /2 + (u*z * tau3**3)/2 + (3*u*q - 15*u*z**2+u**2) * (tau3**4)/24
+
+    #g functions are taylor series to fourth degree
+    g1 = tau1 - (u*tau1**3)/6 + (u*z * tau1**4)/4
+    g3 = tau3 - (u*tau3**3)/6 + (u*z * tau3**4)/4
     print("f1: ", f1)
     print("f3: " , f3)
     print("g1: ", g1)
@@ -221,19 +267,15 @@ def iterate(r2,r2dot,t1,t2,t3):
     r2 = rho2 - R2
     r3 = rho3 - R3
     r2dot = np.multiply(r1,d1) + np.multiply(d3,r3)
-
-    t1 = t1 - mag(rho1)/C
-    t2 = t2 - mag(rho2)/C
-    t3 = t3 - mag(rho3)/C
     
-    if (abs(mag(r2) - magprevr2) < 10E-6):
+    if (abs(mag(r2) - magprevr2) < 10E-5):
         return r2,r2dot
-    return iterate(r2, r2dot, t1,t2,t3)
+    return iterate(r2, r2dot)
 
 rvec, rdotvec = firstiterate(roots[0])
 print("magrev: ", mag(rvec))
 print("magrdotvec: ", mag(rdotvec))
-finalr, finalr2 = iterate(rvec,rdotvec,t1,t2,t3)
+finalr, finalr2 = iterate(rvec,rdotvec)
 print(mag(finalr))
 print("final r list: ", finalr.tolist())
 print("Final r2dot: " ,finalr2.tolist())
