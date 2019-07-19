@@ -1,4 +1,5 @@
 import numpy as np
+from math import *
 
 arr = np.array([1,2,3])
 arr = np.multiply(2,arr)
@@ -13,9 +14,26 @@ x[0] = x[0] + 5
 print(x)
 def fill(a):
     a[0] = a[0] +100000000
+
+def two():
+    return 1, 2
 fill(x)
 print("XX", x)
-x = list(fun)
 x[0] = x[0] + 1000
-print(fun)
 print(x)
+print(np.dot(x,100))
+
+
+arr1 = [[1],
+        [2],
+        [3]]
+arr2 = [[5],
+        [6],
+        [7]]
+print(np.multiply(500000000,arr2))
+print(degrees(pi))
+
+tent = []
+tent.extend(two())
+print(tent)
+print(np.multiply([[5,3],[5,1],[5,0]],[[3,2],[3,2],[3,2]]))

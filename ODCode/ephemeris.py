@@ -41,7 +41,7 @@ def solvekep(M):
         Eguess = M + e*math.sin(Eguess)
     return Eguess
 
-def ephemeris(a,e, I, h, w,m0, t0, t,R):
+def ephemeris(e, a, I, h, w,m0, t0, t):
     print(m)
     E = solvekep(m)
     print(E)
@@ -61,7 +61,9 @@ def ephemeris(a,e, I, h, w,m0, t0, t,R):
                    [0,0,1]])
     vecXYZ = r3 * r2 * r1 * vecxyz
     print(vecXYZ)
-    vecSun = R
+    vecSun = np.mat([[-2.027522170125452e-01],
+                     [9.963111621309770e-01],
+                     [-6.498231666301151e-05]])
     
     vecRho = (vecSun + vecXYZ)
     
@@ -80,4 +82,38 @@ def ephemeris(a,e, I, h, w,m0, t0, t,R):
     print(degtohr(deg(afinal)))
     return deg(dfinal), degtohr(deg(afinal))
 
-ephemeris(e,a,I,h,w,m0,t0,t)
+def ephemeris2(a, e, I, h, w,m0, t0, t,R):
+    E = solvekep(m)
+    x = a*(math.cos(E) - e)
+    y = a * (math.sqrt(1-e**2) * math.sin(E))
+    z = 0
+    vecxyz = np.mat([[x],[y],[z]])
+    r1 = np.mat([[math.cos(w), -math.sin(w), 0],
+                  [math.sin(w), math.cos(w), 0],
+                  [0,0,1]])
+    r2 = np.mat([[1,0,0],
+                  [0,math.cos(I),-math.sin(I)],
+                  [0,math.sin(I),math.cos(I)]])
+    r3 = np.mat([[math.cos(h), -math.sin(h),0],
+                   [math.sin(h), math.cos(h), 0],
+                   [0,0,1]])
+    vecXYZ = r3 * r2 * r1 * vecxyz
+    vecSun = R
+    
+    vecRho = (vecSun + vecXYZ)
+    
+    vecRhoHat = vecRho / np.linalg.norm(vecRho)
+    
+    rX = vecRhoHat[0][0]
+    rY = vecRhoHat[1][0] * math.cos(ee) - vecRhoHat[2][0] * math.sin(ee)
+    rZ = vecRhoHat[1][0] * math.sin(ee) + vecRhoHat[2][0] * math.cos(ee)
+    
+
+
+
+    dfinal = math.asin(rZ)
+    afinal = math.atan2(rY,rX)
+    print((deg(dfinal)))
+    print("AAAAAA: ", (deg(afinal)))
+    return (deg(dfinal)), (deg(afinal))
+#ephemeris(e,a,I,h,w,m0,t0,t)

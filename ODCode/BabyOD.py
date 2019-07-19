@@ -111,6 +111,7 @@ def babyOD(rvec, rvecdot, t):
     print("n = ", n)
     print("T = ", T)
     print("P = ", P)
+    print("STEAKKKKKKKKKKKKKKKKKKKKKKKKK")
 
 ##babyOD([0.11507222713443244, -1.123393746613972, 0.09102871066613388]
 ##, [1.0419839550663161, 0.22149954021077756, -0.11425372540357415], 2458309.74862)
@@ -195,16 +196,20 @@ def babyOD2(rvec, rvecdot, t):
     n = getn2(a)
     T = getT2(M,n,t)
     P = getP2(n)
-    print("a = ", geta2(rvec,rvecdot))
-    print("e = ", gete2(rvec, rvecdot,a ))
-    print("i = ", degree(geti2(hvec)))
-    print("Ω = ", degree(omega))
-    print("w = ", degree(w))
-    print("M = ", degree(M))
-    print("E = ", degree(E))
-    print("n = ", n)
-    print("T = ", T)
-    print("P = ", P)
+    precessedM = M + n*(2458685.75 - t)
+##    print("a = ", geta2(rvec,rvecdot))
+##    print("e = ", gete2(rvec, rvecdot,a ))
+##    print("i = ", degree(geti2(hvec)))
+##    print("Ω = ", degree(omega))
+##    print("w = ", degree(w))
+##    print("M = ", degree(M))
+##    print("E = ", degree(E))
+##    print("n = ", n)
+##    print("T = ", T)
+##    print("P = ", P)
+    print("PrecessedM = ", precessedM)
+    return a, e, i, omega, w, M
+
 def main():
     babyOD2([-0.52625769,  1.45365528, -0.12164782],[-0.68327862, -0.65363404,  0.15057236],2458665.833333)
     babyOD([-0.52625769,  1.45365528, -0.12164782],[-0.68327862, -0.65363404,  0.15057236],2458665.833333)

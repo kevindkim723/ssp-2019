@@ -5,6 +5,11 @@ from BabyOD import *
 EPSILON = radians(23.4358)
 C = 173.145
 #converts into julian date
+def arrDeg(x):
+    b = list.copy(x)
+    for i in range(len(b)):
+        b[i] = degrees(b[i])
+    return b
 def convertJulian(year, month, date, hour, minute, second):
     year = float(year)
     month = float(month)
@@ -246,15 +251,28 @@ def iterate(r2,r2dot, bound):
         return r2,r2dot
     return iterate(r2, r2dot,bound)
 def main():
-    
-    roots = findroots("files/odstarter2.txt")
+    finalr, finalr2 = gauss("files/odstarter2.txt")
+    print(finalr)
+    print(finalr2)
+    babyOD2(finalr.tolist(), finalr2.tolist(), t[1])
+#returns r vector, rdot vector
+def gauss(starterfile):
+    roots = findroots(starterfile)
     index = input("which root (1,2,3) ")
     rvec, rdotvec = firstiterate(roots[0])
     bound = -1 * int(input("to what bound? 10E-: "))
     bound = 10**(bound)
     finalr, finalr2 = iterate(rvec,rdotvec,bound)
-    print(finalr)
-    print(finalr2)
-    babyOD2(finalr.tolist(), finalr2.tolist(), t[1])
+    return finalr, finalr2
+def gauss2(starterfile):
+    roots = findroots(starterfile)
+    index = input("which root (1,2,3) ")
+    rvec, rdotvec = firstiterate(roots[0])
+    bound = -1 * int(input("to what bound? 10E-: "))
+    bound = 10**(bound)
+    finalr, finalr2 = iterate(rvec,rdotvec,bound)
+    return finalr, finalr2,t,R[1], arrDeg(ra),t[1]
 
-main()
+main()    
+    
+
