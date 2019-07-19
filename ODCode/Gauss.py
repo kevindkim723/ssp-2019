@@ -37,9 +37,9 @@ def RAtoDegree(sRA):
             if (isnegative):
                 sDeg = sDeg - 360 * float(arr[i])/(24 * 60 ** i)
             else:
-                sDeg = sDeg + 360 * float(arr[i])/(24 * 60 ** i)
+                sDeg = sDeg + 360 * float(arr[i])/(24 * 60 ** i)                                                                                                                         
     return sDeg
-#helper method to convert sexagesimal to decimal degree
+#helper method to convert sexagesimal to decimal degree                                                                                                                                         
 def DtoDegree(sD):
     sDeg = 0
     arr = sD.split(":")
@@ -104,22 +104,14 @@ def feed(starterfile):
     rho2hat = ecliptic(np.array([cos(ra[1]) * cos(dec[1]), sin(ra[1]) * cos(dec[1]), sin(dec[1])]))
     rho3hat = ecliptic(np.array([cos(ra[2]) * cos(dec[2]), sin(ra[2]) * cos(dec[2]), sin(dec[2])]))
         
-        
 
 def findroots(starterfile):
     global D0,D11,D12,D13,D21,D22,D23,D31,D32,D33
     feed(starterfile)
-    dec[0] = radians(11.343972)
-    dec[1] = radians(4.748306)
-    dec[2] = radians(0.493028)
    
+    
+  
 
-
-    dec1 = radians(11.343972)
-    dec2 = radians(4.748306)
-    dec3 = radians(0.493028)
-
-   
     #defining d vectors from roh vectors
     D0 = np.dot(rho1hat, np.cross(rho2hat, rho3hat))
 
@@ -152,10 +144,10 @@ def findroots(starterfile):
     a = -(A**2 + A*E + F)
     b = -1 * (2*A*B + B * E)
     c = -1 * B**2
-
+    
     polynomial = [1,0,a,0,0,b,0,0,c]
     roots = []
-
+    
     #removes all unreasonable roots 
     for r2 in np.roots(polynomial):
         if abs(r2) == r2  and "0j" in str(r2):
@@ -255,12 +247,14 @@ def iterate(r2,r2dot, bound):
     return iterate(r2, r2dot,bound)
 def main():
     
-    roots = findroots("files/odstarter1.txt")
+    roots = findroots("files/odstarter2.txt")
     index = input("which root (1,2,3) ")
     rvec, rdotvec = firstiterate(roots[0])
     bound = -1 * int(input("to what bound? 10E-: "))
     bound = 10**(bound)
     finalr, finalr2 = iterate(rvec,rdotvec,bound)
-    babyOD2(finalr.tolist(), finalr2.tolist(), t2)
+    print(finalr)
+    print(finalr2)
+    babyOD2(finalr.tolist(), finalr2.tolist(), t[1])
 
 main()

@@ -94,12 +94,7 @@ def LSPR(filename, x, y):
 
 
     
-    print("b1: ", b1)
-    print("b2: ", b2)
-    print("a11: ", a11)
-    print("a12: ", a12)
-    print("a21: ", a21)
-    print("a22: ", a22)
+   
     print(sum_x)
     print(sum_y)
     print(sum_RA)
@@ -160,12 +155,7 @@ def LSPR2(arrRA, arrD, arrX, arrY,x,y):
 
     #matrix operations to find RA and D
    
-    print("b1: ", b1)
-    print("b2: ", b2)
-    print("a11: ", a11)
-    print("a12: ", a12)
-    print("a21: ", a21)
-    print("a22: ", a22)
+
    
 
     RA = b1 + a11*x + a12 * y

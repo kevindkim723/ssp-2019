@@ -30,8 +30,8 @@ def PhotometricData(starterfile, imgfile):
         if ("#" in line):
             line = line.strip("#")
             arrline = line.split(" ")
-            x = (int(arrline[0]))
-            y = (int(arrline[1]))
+            x = int(float(arrline[0]))
+            y = int(float(arrline[1]))
             aprad = int(arrline[2])
             anrad1 = int(arrline[3])
             anrad2 = int(arrline[4])
@@ -40,8 +40,8 @@ def PhotometricData(starterfile, imgfile):
             continue
         line = line.strip("\n")
         arrline = line.split(" ")
-        x = (int(arrline[0]))
-        y = (int(arrline[1]))
+        x = int(float(arrline[0]))
+        y = int(float(arrline[1]))
         aprad = int(arrline[2])
         anrad1 = int(arrline[3])
         anrad2 = int(arrline[4])
@@ -78,11 +78,12 @@ def configureplot(xlabel, ylabel, title):
     plt.ylabel(ylabel)
     fig.suptitle(title)
 
+def main():
+    starter = "files/" + input("enter starterfile name: ")
+    fits = "files/" + input("enter fits file name: ")
+    PhotometricData(starter, fits)
+
     
-
-
-    
-PhotometricData("files/june18pstarter.txt", "files/june18.fits")
-
+main()
     
     
