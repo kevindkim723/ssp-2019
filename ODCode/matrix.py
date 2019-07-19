@@ -34,6 +34,6 @@ print(np.multiply(500000000,arr2))
 print(degrees(pi))
 
 tent = []
-tent.extend(two())
+tent.extend([10,10,101,1001010100,10])
 print(tent)
 print(np.multiply([[5,3],[5,1],[5,0]],[[3,2],[3,2],[3,2]]))

@@ -271,8 +271,8 @@ def gauss2(starterfile):
     bound = -1 * int(input("to what bound? 10E-: "))
     bound = 10**(bound)
     finalr, finalr2 = iterate(rvec,rdotvec,bound)
-    return finalr, finalr2,t,R[1], arrDeg(ra),t[1]
+    return finalr, finalr2,R[1], arrDeg(ra),arrDeg(dec),t,t[1]
 
-main()    
+#main()    
     
 
