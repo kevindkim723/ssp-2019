@@ -6,7 +6,9 @@ def rad(x):
     return x * math.pi/180
 def deg(x):
     x= float(x)
-    return x * 180 / math.pi
+    x= math.degrees(x)
+    return x%360
+
 def degtohr(x):
     e1 = int(x/15)
     e2 = int((x/15 - int(x/15)) * 60)
@@ -20,17 +22,30 @@ def dectodeg(x):
 
 
 ee = rad(23.4358)
-e = 0.6587595515873473
-a = 3.092704185336301
-I = rad(11.74759239647092)
-h = rad(82.15763948051409)
-w = rad(356.34109239)
-m0 = rad(0.01246738682149958)
-t0 = 2458465.5
-t = 2458668.5
+##e = 0.28331310458469633
+##a = 2.2495261230271955
+##I = rad(2.329049882757262)
+##h = rad(186.51088998482294)
+##w = rad(99.91312457147937)
+##m0 = rad(350.5393113464045)
+##t0 = 2458658.7401
+##t = 2458658.7401
+
+
+a = 3.329266561968764 
+e = 0.6299849509247278
+I = (12.517641336786165)
+h =(232.4541126201005)
+w = (51.182264906780865) 
+m0 = (357.32680694597434)
+t= 2458656.695928472
+t0 = 2458665.738722454
 mu = .01720209895
 n = mu / math.sqrt(a**3)
-m = m0 + n*(t - t0)
+m = m0 + n*(t-t0)
+
+
+
 
 def solvekep(M):
     Eguess = M
@@ -41,7 +56,7 @@ def solvekep(M):
         Eguess = M + e*math.sin(Eguess)
     return Eguess
 
-def ephemeris(e, a, I, h, w,m0, t0, t):
+def ephemeris(a,e, I, h, w,m0, t0, t,R):
     print(m)
     E = solvekep(m)
     print(E)
@@ -61,9 +76,7 @@ def ephemeris(e, a, I, h, w,m0, t0, t):
                    [0,0,1]])
     vecXYZ = r3 * r2 * r1 * vecxyz
     print(vecXYZ)
-    vecSun = np.mat([[-2.027522170125452e-01],
-                     [9.963111621309770e-01],
-                     [-6.498231666301151e-05]])
+    vecSun = R
     
     vecRho = (vecSun + vecXYZ)
     
@@ -78,16 +91,23 @@ def ephemeris(e, a, I, h, w,m0, t0, t):
 
     dfinal = math.asin(rZ)
     afinal = math.atan2(rY,rX)
-    print(dectodeg(deg(dfinal)))
-    print(degtohr(deg(afinal)))
-    return deg(dfinal), degtohr(deg(afinal))
+    
+    return (dfinal), ((afinal))
 
 def ephemeris2(a, e, I, h, w,m0, t0, t,R):
+    I = rad(I)
+    h = rad(h)
+    w = rad(w)
+    m0 = rad(m0)
+    m = m0 + n*(t-t0)
     E = solvekep(m)
     x = a*(math.cos(E) - e)
+    
+
     y = a * (math.sqrt(1-e**2) * math.sin(E))
     z = 0
     vecxyz = np.mat([[x],[y],[z]])
+
     r1 = np.mat([[math.cos(w), -math.sin(w), 0],
                   [math.sin(w), math.cos(w), 0],
                   [0,0,1]])
@@ -109,11 +129,9 @@ def ephemeris2(a, e, I, h, w,m0, t0, t,R):
     rZ = vecRhoHat[1][0] * math.sin(ee) + vecRhoHat[2][0] * math.cos(ee)
     
 
-
-
     dfinal = math.asin(rZ)
     afinal = math.atan2(rY,rX)
-    print((deg(dfinal)))
-    print("AAAAAA: ", (deg(afinal)))
-    return (deg(dfinal)), (deg(afinal))
-#ephemeris(e,a,I,h,w,m0,t0,t)
+    return (deg(dfinal)), (deg(afinal%(math.pi * 2)))
+ZZz = [[-0.00434299214720792], [1.016287003718659], [-8.135030851684823e-05]]
+print(ephemeris2(a,e,I,h,w,m0,t0,t,ZZz))
+#

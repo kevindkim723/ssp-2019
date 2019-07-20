@@ -1,5 +1,7 @@
 import numpy as np
 from math import *
+from ephemeris import *
+from BabyOD import *
 
 arr = np.array([1,2,3])
 arr = np.multiply(2,arr)
@@ -37,3 +39,18 @@ tent = []
 tent.extend([10,10,101,1001010100,10])
 print(tent)
 print(np.multiply([[5,3],[5,1],[5,0]],[[3,2],[3,2],[3,2]]))
+for x in range(5,8):
+    print(x)
+sunvec = [[-0.1567805100523754],
+          [1.004571913998728],
+          [-8.241513835712403e-05]]
+r2 = [-0.04421857, -1.23734529,  0.15962511]
+r2dot = [1.12155899, 0.09995605, 0.18390451]
+t0 = 2458665.738722454
+
+OE = babyOD2(r2, r2dot,t0)
+        
+
+DECfit,RAfit = ephemeris2(OE[0],OE[1],OE[2],OE[3],OE[4],40,t0,t0,sunvec)
+print(DECfit)
+

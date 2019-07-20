@@ -95,44 +95,44 @@ D33 = 0
 
 
 def feed(starterfile):
-    global rho1hat,rho2hat,rho3hat
     for line in open(starterfile,'r'):
+        if ("#" in line):
+            continue
         line = line.strip("\n")
         arrline = line.split(" ")
         time = arrline[3].split(":")
         t.append(convertJulian(arrline[0],arrline[1],arrline[2],time[0],time[1],time[2]))
         ra.append(radians(RAtoDegree(arrline[4])))
         dec.append(radians(DtoDegree(arrline[5])))
-        R.append(np.array([float(arrline[6]),float(arrline[7]),float(arrline[8])]))
-    #rho hat vectors in ecliptic 1 -3
-    rho1hat = ecliptic(np.array([cos(ra[0]) * cos(dec[0]), sin(ra[0]) * cos(dec[0]), sin(dec[0])]))
-    rho2hat = ecliptic(np.array([cos(ra[1]) * cos(dec[1]), sin(ra[1]) * cos(dec[1]), sin(dec[1])]))
-    rho3hat = ecliptic(np.array([cos(ra[2]) * cos(dec[2]), sin(ra[2]) * cos(dec[2]), sin(dec[2])]))
-        
+        R.append((np.array([float(arrline[6]),float(arrline[7]),float(arrline[8])])))
+           
 
-def findroots(starterfile):
-    global D0,D11,D12,D13,D21,D22,D23,D31,D32,D33
-    feed(starterfile)
-   
-    
+def findroots(i):
+    global D0,D11,D12,D13,D21,D22,D23,D31,D32,D33,rho1hat,rho2hat,rho3hat
+    f = len(t)-1
+     #rho hat vectors in ecliptic 1 -3
+    rho1hat = ecliptic(np.array([cos(ra[0]) * cos(dec[0]), sin(ra[0]) * cos(dec[0]), sin(dec[0])]))
+    rho2hat = ecliptic(np.array([cos(ra[i]) * cos(dec[i]), sin(ra[i]) * cos(dec[i]), sin(dec[i])]))
+    rho3hat = ecliptic(np.array([cos(ra[f]) * cos(dec[f]), sin(ra[f]) * cos(dec[f]), sin(dec[f])]))
+
   
 
     #defining d vectors from roh vectors
     D0 = np.dot(rho1hat, np.cross(rho2hat, rho3hat))
 
     D11 = np.dot(np.cross(R[0], rho2hat), rho3hat)
-    D12 = np.dot(np.cross(R[1], rho2hat), rho3hat)
-    D13 = np.dot(np.cross(R[2], rho2hat), rho3hat)
+    D12 = np.dot(np.cross(R[i], rho2hat), rho3hat)
+    D13 = np.dot(np.cross(R[f], rho2hat), rho3hat)
     D21 = np.dot(np.cross(rho1hat, R[0]), rho3hat)
-    D22 = np.dot(np.cross(rho1hat, R[1]), rho3hat)
-    D23 = np.dot(np.cross(rho1hat, R[2]), rho3hat)
+    D22 = np.dot(np.cross(rho1hat, R[i]), rho3hat)
+    D23 = np.dot(np.cross(rho1hat, R[f]), rho3hat)
     D31 = np.dot(np.cross(rho2hat, R[0]), rho1hat)
-    D32 = np.dot(np.cross(rho2hat, R[1]), rho1hat)
-    D33 = np.dot(np.cross(rho2hat, R[2]), rho1hat)
+    D32 = np.dot(np.cross(rho2hat, R[i]), rho1hat)
+    D33 = np.dot(np.cross(rho2hat, R[f]), rho1hat)
 
     nu  = k ** 2
-    tau1 = k * (t[0] - t[1])
-    tau3 = k * (t[2] - t[1])
+    tau1 = k * (t[0] - t[i])
+    tau3 = k * (t[f] - t[i])
     tau = tau3 - tau1
 
 
@@ -143,8 +143,8 @@ def findroots(starterfile):
     B3 = A3*(tau**2 - tau1**2)/6
     A = (A1 * D21 - D22 + A3*D23)/-D0
     B = (B1*D21 + B3 * D23)/-D0
-    E = -2*(np.dot(rho2hat, R[1]))
-    F = mag(R[1]) ** 2
+    E = -2*(np.dot(rho2hat, R[i]))
+    F = mag(R[i]) ** 2
 
     a = -(A**2 + A*E + F)
     b = -1 * (2*A*B + B * E)
@@ -158,12 +158,13 @@ def findroots(starterfile):
         if abs(r2) == r2  and "0j" in str(r2):
             roots.append(r2)
     return roots
-def firstiterate(r2mag):
+def firstiterate(r2mag,i):
     r2mag = float(r2mag)
+    f = len(t)-1
     global rho1,rho2,rho3
 
-    tau1 = k * (t[0] - t[1])
-    tau3 = k * (t[2] - t[1])
+    tau1 = k * (t[0] - t[i])
+    tau3 = k * (t[f] - t[i])
 
     #solve second degree taylor series for f
     f1 = 1 - tau1**2/(2 * r2mag**3)
@@ -193,21 +194,23 @@ def firstiterate(r2mag):
 
     #calculating r1,r2,r3 from the fundamental triangle using sun vector and rho vectors
     r1 = rho1 - R[0]
-    r2 = rho2 - R[1]
-    r3 = rho3 - R[2]
+    r2 = rho2 - R[i]
+    r3 = rho3 - R[f]
     
     r2dot = np.multiply(r1,d1) + np.multiply(d3,r3)
     return r2,r2dot
 
 #finds proper r2 via taylor expansions of the f and g series
-def iterate(r2,r2dot, bound):
+def iterate(r2,r2dot, bound,i):
+    f = len(t)-1
+
     global rho1,rho2,rho3
     
     magprevr2 = mag(r2)
 
     t1mod = t[0] - mag(rho1)/C
-    t2mod = t[1] - mag(rho2)/C
-    t3mod = t[2] - mag(rho3)/C
+    t2mod = t[i] - mag(rho2)/C
+    t3mod = t[f] - mag(rho3)/C
     
     tau1 = k * ( t1mod - t2mod)
     tau3 = k * (t3mod - t2mod)
@@ -243,35 +246,63 @@ def iterate(r2,r2dot, bound):
 
     #calculating r1,r2,r3 from the fundamental triangle using sun vector and rho vectors
     r1 = rho1 - R[0]
-    r2 = rho2 - R[1]
-    r3 = rho3 - R[2]
+    r2 = rho2 - R[i]
+    r3 = rho3 - R[f]
     
     r2dot = np.multiply(r1,d1) + np.multiply(d3,r3)
     if (abs(mag(r2) - magprevr2)) < (bound):
         return r2,r2dot
-    return iterate(r2, r2dot,bound)
+    return iterate(r2, r2dot,bound,i)
 def main():
-    finalr, finalr2 = gauss("files/odstarter2.txt")
-    print(finalr)
-    print(finalr2)
-    babyOD2(finalr.tolist(), finalr2.tolist(), t[1])
+    gauss("files/odstarter3.txt")
+    
+    
 #returns r vector, rdot vector
 def gauss(starterfile):
-    roots = findroots(starterfile)
-    index = input("which root (1,2,3) ")
-    rvec, rdotvec = firstiterate(roots[0])
-    bound = -1 * int(input("to what bound? 10E-: "))
-    bound = 10**(bound)
-    finalr, finalr2 = iterate(rvec,rdotvec,bound)
-    return finalr, finalr2
+    listr2 = []
+    listr2dot = []
+    finalr = []
+    finalr2 = []
+    listR = []
+    listT = []
+    feed(starterfile)
+    i = 1
+    while (i != len(t)-1):
+        print(i)
+        roots = findroots(i)
+        print("ROOTS: ", roots)
+        index = int(input("which root (1,2,3) "))
+        rvec, rdotvec = firstiterate(roots[index-1],i)
+        bound = -1 * int(input("to what bound? 10E-: "))
+        bound = 10**(bound)
+        finalr, finalr2 = iterate(rvec,rdotvec,bound,i)
+        babyOD2(finalr.tolist(), finalr2.tolist(), t[i])
+        listr2.append(finalr.tolist())
+        listr2dot.append(finalr2.tolist())
+        listR.append(i)
+        listT.append(i)
+        print("**********************************NEXT PERMUTATION ***************************")
+        i+=1
+        
+##    roots = findroots(1)
+##    index = int(input("which root (1,2,3) "))
+##    rvec, rdotvec = firstiterate(roots[index-1],1)
+##    bound = -1 * int(input("to what bound? 10E-: "))
+##    bound = 10**(bound)
+##    finalr, finalr2 = iterate(rvec,rdotvec,bound,i)
+        
+    print("FINALR: ",finalr)
+    #return r2, r2dot, R, listR,arrDeg(ra),arrDeg(dec),t,listT
 def gauss2(starterfile):
-    roots = findroots(starterfile)
+    feed(starterfile)
+    roots = findroots(1)
     index = input("which root (1,2,3) ")
-    rvec, rdotvec = firstiterate(roots[0])
+    rvec, rdotvec = firstiterate(roots[0],1)
     bound = -1 * int(input("to what bound? 10E-: "))
     bound = 10**(bound)
-    finalr, finalr2 = iterate(rvec,rdotvec,bound)
-    return finalr, finalr2,R[1], arrDeg(ra),arrDeg(dec),t,t[1]
+    finalr, finalr2 = iterate(rvec,rdotvec,bound,1)
+    return finalr, finalr2,R,R[1], arrDeg(ra),arrDeg(dec),t,t[1]
+
 
 #main()    
     

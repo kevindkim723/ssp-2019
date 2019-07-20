@@ -5,7 +5,8 @@ def degree(x):
     x =  x * 180 / m.pi
     return x%360
 def rad(x):
-    return x * m.pi / 180
+    x= x * m.pi / 180
+    return x % (2*m.pi)
 def mag(x):
     return np.linalg.norm(x)
 def clamp(x):
@@ -112,6 +113,7 @@ def babyOD(rvec, rvecdot, t):
     print("T = ", T)
     print("P = ", P)
     print("STEAKKKKKKKKKKKKKKKKKKKKKKKKK")
+    return a, e, degree(i), degree(omega), degree(w),degree(M)
 
 ##babyOD([0.11507222713443244, -1.123393746613972, 0.09102871066613388]
 ##, [1.0419839550663161, 0.22149954021077756, -0.11425372540357415], 2458309.74862)
@@ -197,22 +199,22 @@ def babyOD2(rvec, rvecdot, t):
     T = getT2(M,n,t)
     P = getP2(n)
     precessedM = M + n*(2458685.75 - t)
-##    print("a = ", geta2(rvec,rvecdot))
-##    print("e = ", gete2(rvec, rvecdot,a ))
-##    print("i = ", degree(geti2(hvec)))
-##    print("Ω = ", degree(omega))
-##    print("w = ", degree(w))
-##    print("M = ", degree(M))
-##    print("E = ", degree(E))
-##    print("n = ", n)
-##    print("T = ", T)
-##    print("P = ", P)
-    print("PrecessedM = ", precessedM)
-    return a, e, i, omega, w, M
+    print("COFEONJADFOJDFASOJDFS: ", n*(2458685.75 - t))
+    print("a = ", geta2(rvec,rvecdot))
+    print("e = ", gete2(rvec, rvecdot,a ))
+    print("i = ", degree(geti2(hvec)))
+    print("Ω = ", degree(omega))
+    print("w = ", degree(w))
+    print("M = ", degree(M))
+    print("E = ", degree(E))
+    print("n = ", n)
+    print("T = ", T)
+    print("P = ", P)
+    print("PrecessedM = ", degree(precessedM))
+    return a, e, degree(i), degree(omega), degree(w),degree(M)
 
 def main():
-    babyOD2([-0.52625769,  1.45365528, -0.12164782],[-0.68327862, -0.65363404,  0.15057236],2458665.833333)
-    babyOD([-0.52625769,  1.45365528, -0.12164782],[-0.68327862, -0.65363404,  0.15057236],2458665.833333)
-
+    babyOD2([.26617801, -1.25968549,-0.38388658], [.793688,0.18369241,.38231058], 2458304.74796)
+    #babyOD([-0.52625769,  1.45365528, -0.12164782],[-0.68327862, -0.65363404,  0.15057236],2458665.833333)
 
 #main()

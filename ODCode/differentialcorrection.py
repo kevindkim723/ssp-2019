@@ -6,7 +6,15 @@ from Gauss import *
 T_DUE = 2458685.75
 
 #i know it's terrible code but too late to fix xD
-
+deltas = []
+parX = []
+parY = []
+parZ = []
+parXdot = []
+parYdot = []
+parZdot = []
+ra = []
+dec = []
 #returns partial of RA and DEC in respect to X
 def getdRAdX(rvec, rvecdot, R, delta,t,t0):
     rvec = list(rvec)
@@ -93,24 +101,18 @@ def getdRAdZdot(rvec, rvecdot, R, delta,t,t0):
 #RA should be in degrees
 def correct(rvec, rvecdot, R, delta,ra,dec,t,t0):
     rvecdot = list(rvecdot)    
-    deltas = []
-    parX = []
-    parY = []
-    parZ = []
-    parXdot = []
-    parYdot = []
-    parZdot = []
+    global parX, parY,parZ,parXdot,parYdot,parZdot,deltas
     for i in range(len(t)):
-        OE = babyOD2(rvec, rvecdot,t0)
+        OE = babyOD2(rvec, rvecdot,t[i])
 
-        DECfit,RAfit = ephemeris2(OE[0],OE[1],OE[2],OE[3],OE[4],OE[5],t0,t[i],R)
+        DECfit,RAfit = ephemeris2(OE[0],OE[1],OE[2],OE[3],OE[4],OE[5],t0,t[i],R[i])
 
-        parX.extend(getdRAdX(rvec,rvecdot,R,delta,t[i],t0))
-        parY.extend(getdRAdY(rvec,rvecdot,R,delta,t[i],t0))
-        parZ.extend(getdRAdZ(rvec,rvecdot,R,delta,t[i],t0))
-        parXdot.extend(getdRAdYdot(rvec,rvecdot,R,delta,t[i],t0))
-        parYdot.extend(getdRAdYdot(rvec,rvecdot,R,delta,t[i],t0))
-        parZdot.extend(getdRAdZdot(rvec,rvecdot,R,delta,t[i],t0))
+        parX.extend(getdRAdX(rvec,rvecdot,R[i],delta,t[i],t0))
+        parY.extend(getdRAdY(rvec,rvecdot,R[i],delta,t[i],t0))
+        parZ.extend(getdRAdZ(rvec,rvecdot,R[i],delta,t[i],t0))
+        parXdot.extend(getdRAdYdot(rvec,rvecdot,R[i],delta,t[i],t0))
+        parYdot.extend(getdRAdYdot(rvec,rvecdot,R[i],delta,t[i],t0))
+        parZdot.extend(getdRAdZdot(rvec,rvecdot,R[i],delta,t[i],t0))
         
         deltas.extend([abs(ra[i] - RAfit), abs(dec[i] - DECfit)])
     
@@ -142,16 +144,54 @@ def correct(rvec, rvecdot, R, delta,ra,dec,t,t0):
 
 
 def diffcorrect(starterfile):
-    r2, r2dot,R,ra,dec,t,t0 = gauss2(starterfile)
+    global ra, dec
+    r2, r2dot,R,R0,ra,dec,t,t0 = gauss2(starterfile)
     #parse sun vector into column vector
-    R = [[R[0]],
-         [R[1]],
-         [R[2]]]
-    print("******************************************** ", correct(r2,r2dot,R,10E-4,ra,dec,t,t0))
-    #xyzArr = correct(r2,r2dot,R,10E-4,ra,dec,t,t0)
+    for i in range(len(R)):
+        R[i] = [[R[i][0]],
+             [R[i][1]],
+             [R[i][2]]]
+    print("R2: ", r2)
+    print("R2dot: ", r2dot)
+    print("R: ", R)
+    print("t: ", t)
+    print("t0: ", t0)
+    print("RAS: ", ra)
+    print("DECS: ", dec)
+
+
+    RMS1 = RMS(r2,r2dot,R,t,t0)
+
+    xyzArr = correct(r2,r2dot,R,10E-4,ra,dec,t,t0)
+    print(xyzArr)
+    for i in range(3):
+        r2[i] += xyzArr[i][0]
+    for i in range(3,6):
+        r2dot[i-3]+=xyzArr[i][0]
+    RMS2 = RMS(r2,r2dot,R,t,t0)
+    print(babyOD2(r2, r2dot, t0))
+    print("RMS1: ", RMS1)
+    print("RMS2: ", RMS2)
+
+def RMS(r2, r2dot,R,t,t0):
+    deltalist = []
+    r2 = list(r2)
+    r2dot = list(r2dot)
+    for i in range(len(t)):
+        OE = babyOD2(r2, r2dot,t[i])
+        
+        
+        DECfit,RAfit = ephemeris2(OE[0],OE[1],OE[2],OE[3],OE[4],OE[5],t0,t[i],R[i])
+
+        print("ra[i]: ", ra[i])
+        print("RAFIT: ", RAfit)
+        print("dec[i]: ", dec[i])
+        print("decfit: ", DECfit)
+        deltalist.extend([abs(ra[i] - RAfit), abs(dec[i] - DECfit)])
+        print("DELTALIST: ",deltalist)
+    return sqrt(np.dot(deltalist,deltalist)/(len(t)*2-6))
     
-
-
-diffcorrect("files/odstarter1.txt")
+    
+diffcorrect("files/odstarter3.txt")
     
                  
