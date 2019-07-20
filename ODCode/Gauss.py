@@ -4,12 +4,15 @@ from BabyOD import *
 
 EPSILON = radians(23.4358)
 C = 173.145
-#converts into julian date
 def arrDeg(x):
     b = list.copy(x)
     for i in range(len(b)):
         b[i] = degrees(b[i])
     return b
+
+
+#converts into julian date
+
 def convertJulian(year, month, date, hour, minute, second):
     year = float(year)
     month = float(month)
@@ -67,9 +70,6 @@ def DtoDegree(sD):
 def mag(x):
     return np.linalg.norm(x)
 
-
-
-
 rho1hat = []
 rho2hat = []
 rho3hat = []
@@ -95,6 +95,7 @@ D33 = 0
 
 
 def feed(starterfile):
+    global ra, dec,t,R
     for line in open(starterfile,'r'):
         if ("#" in line):
             continue
@@ -108,6 +109,7 @@ def feed(starterfile):
            
 
 def findroots(i):
+    i = int(i)
     global D0,D11,D12,D13,D21,D22,D23,D31,D32,D33,rho1hat,rho2hat,rho3hat
     f = len(t)-1
      #rho hat vectors in ecliptic 1 -3
@@ -203,7 +205,7 @@ def firstiterate(r2mag,i):
 #finds proper r2 via taylor expansions of the f and g series
 def iterate(r2,r2dot, bound,i):
     f = len(t)-1
-
+    
     global rho1,rho2,rho3
     
     magprevr2 = mag(r2)
@@ -254,56 +256,63 @@ def iterate(r2,r2dot, bound,i):
         return r2,r2dot
     return iterate(r2, r2dot,bound,i)
 def main():
-    gauss("files/odstarter3.txt")
+    path = input("Enter file PATH: ")
+    gauss(path)
     
     
 #returns r vector, rdot vector
 def gauss(starterfile):
-    listr2 = []
-    listr2dot = []
-    finalr = []
-    finalr2 = []
-    listR = []
-    listT = []
+    
     feed(starterfile)
-    i = 1
-    while (i != len(t)-1):
-        print(i)
-        roots = findroots(i)
+    isEcliptic = input("Sun vectors ecliptic? (Y/N): ")
+    if isEcliptic.lower() != "y":
+        for j in range(len(R)):
+            R[j] = ecliptic(R[j])
+    j = 1
+
+    while (j != len(t)-1):
+        print("INDEX: ", j)
+        roots = findroots(j)
         print("ROOTS: ", roots)
         index = int(input("which root (1,2,3) "))
-        rvec, rdotvec = firstiterate(roots[index-1],i)
+        rvec, rdotvec = firstiterate(roots[index-1],j)
         bound = -1 * int(input("to what bound? 10E-: "))
         bound = 10**(bound)
-        finalr, finalr2 = iterate(rvec,rdotvec,bound,i)
-        babyOD2(finalr.tolist(), finalr2.tolist(), t[i])
-        listr2.append(finalr.tolist())
-        listr2dot.append(finalr2.tolist())
-        listR.append(i)
-        listT.append(i)
+        finalr, finalr2 = iterate(rvec,rdotvec,bound,j)
+        a, e, i, o, w, M, MP = babyOD3(finalr.tolist(), finalr2.tolist(), t[j])
+        print("a = ", a)
+        print("e = ", e)
+        print("i = ", i)
+        print("Ω = ", o)
+        print("w = ", w)
+        print("M = ",M)
+        print("PrecessedM = ", MP)
         print("**********************************NEXT PERMUTATION ***************************")
-        i+=1
-        
-##    roots = findroots(1)
-##    index = int(input("which root (1,2,3) "))
-##    rvec, rdotvec = firstiterate(roots[index-1],1)
-##    bound = -1 * int(input("to what bound? 10E-: "))
-##    bound = 10**(bound)
-##    finalr, finalr2 = iterate(rvec,rdotvec,bound,i)
-        
+        j+=1
+
+     
     print("FINALR: ",finalr)
-    #return r2, r2dot, R, listR,arrDeg(ra),arrDeg(dec),t,listT
+
+
+#nothin to see here!
 def gauss2(starterfile):
     feed(starterfile)
+    isEcliptic = input("Sun vectors ecliptic? (Y/N): ")
+    if isEcliptic.lower() != "y":
+        for j in range(len(R)):
+            R[j] = ecliptic(R[j])
+    j = 1
     roots = findroots(1)
     index = input("which root (1,2,3) ")
     rvec, rdotvec = firstiterate(roots[0],1)
     bound = -1 * int(input("to what bound? 10E-: "))
     bound = 10**(bound)
     finalr, finalr2 = iterate(rvec,rdotvec,bound,1)
+    print("SUNVECOTRS: ",R)
     return finalr, finalr2,R,R[1], arrDeg(ra),arrDeg(dec),t,t[1]
 
 
-#main()    
+if __name__ == "__main__":
+    main()
     
 

@@ -88,6 +88,7 @@ def getT(M,n,t):
     return t - M/n
 def getP(n):
     return 2 * m.pi / (n * 365.25)
+#assumes equatorial input
 def babyOD(rvec, rvecdot, t):
     rvec = np.array(rvec)
     rvecdot = np.array(rvecdot)
@@ -184,6 +185,7 @@ def getT2(M,n,t):
     return t - M/n
 def getP2(n):
     return 2 * m.pi / (n * 365.25)
+#assumes ecliptic input
 def babyOD2(rvec, rvecdot, t):
     rvec = np.array(rvec)
     rvecdot = np.array(rvecdot)
@@ -198,23 +200,41 @@ def babyOD2(rvec, rvecdot, t):
     n = getn2(a)
     T = getT2(M,n,t)
     P = getP2(n)
-    precessedM = M + n*(2458685.75 - t)
-    print("COFEONJADFOJDFASOJDFS: ", n*(2458685.75 - t))
-    print("a = ", geta2(rvec,rvecdot))
-    print("e = ", gete2(rvec, rvecdot,a ))
-    print("i = ", degree(geti2(hvec)))
-    print("Ω = ", degree(omega))
-    print("w = ", degree(w))
-    print("M = ", degree(M))
-    print("E = ", degree(E))
-    print("n = ", n)
-    print("T = ", T)
-    print("P = ", P)
-    print("PrecessedM = ", degree(precessedM))
+##    precessedM = M + n*(2458685.75 - t)
+##    print("COFEONJADFOJDFASOJDFS: ", n*(2458685.75 - t))
+##    print("a = ", geta2(rvec,rvecdot))
+##    print("e = ", gete2(rvec, rvecdot,a ))
+##    print("i = ", degree(geti2(hvec)))
+##    print("Ω = ", degree(omega))
+##    print("w = ", degree(w))
+##    print("M = ", degree(M))
+##    print("E = ", degree(E))
+##    print("n = ", n)
+##    print("T = ", T)
+##    print("P = ", P)
+##    print("PrecessedM = ", degree(precessedM))
     return a, e, degree(i), degree(omega), degree(w),degree(M)
-
+#return precessedM
+def babyOD3(rvec, rvecdot, t):
+    rvec = np.array(rvec)
+    rvecdot = np.array(rvecdot)
+    hvec = (np.cross((rvec),(rvecdot)))
+    a = geta2(rvec,rvecdot)
+    e = gete2(rvec,rvecdot,a)
+    i = geti2(hvec)
+    omega = getomega2(hvec, i)
+    w,v = getw2(rvec,rvecdot, hvec, i,e,a, omega)
+    M = getM2(rvec,a,e,v)
+    E = getE2(rvec,a,e,v)
+    n = getn2(a)
+    T = getT2(M,n,t)
+    P = getP2(n)
+    precessedM = M + n*(2458685.75 - t)
+    
+    return a, e, degree(i), degree(omega), degree(w),degree(M),degree(precessedM)
 def main():
     babyOD2([.26617801, -1.25968549,-0.38388658], [.793688,0.18369241,.38231058], 2458304.74796)
     #babyOD([-0.52625769,  1.45365528, -0.12164782],[-0.68327862, -0.65363404,  0.15057236],2458665.833333)
 
-#main()
+if __name__ == "__main__":
+    main()

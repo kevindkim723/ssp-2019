@@ -97,6 +97,7 @@ def ephemeris(a,e, I, h, w,m0, t0, t,R):
 def ephemeris2(a, e, I, h, w,m0, t0, t,R):
     I = rad(I)
     h = rad(h)
+    
     w = rad(w)
     m0 = rad(m0)
     m = m0 + n*(t-t0)
@@ -133,5 +134,5 @@ def ephemeris2(a, e, I, h, w,m0, t0, t,R):
     afinal = math.atan2(rY,rX)
     return (deg(dfinal)), (deg(afinal%(math.pi * 2)))
 ZZz = [[-0.00434299214720792], [1.016287003718659], [-8.135030851684823e-05]]
-print(ephemeris2(a,e,I,h,w,m0,t0,t,ZZz))
+#print(ephemeris2(a,e,I,h,w,m0,t0,t,ZZz))
 #
