@@ -5,8 +5,10 @@ from ephemeris import ephemeris2
 from Gauss import gauss2
 T_DUE = 2458685.75
 EPSILON = radians(23.4358)
+#Differential correction, prints out RMS before and after differential correction
+#on a set of r2 and r2dot vectors.
+#MUST HAVE AT LEAST 4 OBSERVATIONS!
 
-#i know it's terrible code but too late to fix xD
 deltas = []
 parX = []
 parY = []
@@ -26,8 +28,7 @@ def ecliptic(x):
 
 #returns partial of RA and DEC in respect to X
 def getdRAdX(rvec, rvecdot, R, delta,t,t0):
-    rvec = list(rvec)
-    
+    rvec = list(rvec)    
     rvec1 = rvec[:]
     rvec2 = rvec[:]
     rvec1[0] = rvec1[0] + delta
@@ -41,7 +42,6 @@ def getdRAdX(rvec, rvecdot, R, delta,t,t0):
 #returns partial of RA and DEC in respect to Y    
 def getdRAdY(rvec, rvecdot, R, delta,t,t0):
     rvec = list(rvec)
-
     rvec1 = rvec[:]
     rvec2 = rvec[:]
     rvec1[1] = rvec1[1] + delta
@@ -49,7 +49,7 @@ def getdRAdY(rvec, rvecdot, R, delta,t,t0):
     OE = babyOD2(rvec1, rvecdot,t)
     dec1, ra1 = ephemeris2(OE[0],OE[1],OE[2],OE[3],OE[4],OE[5],t0,t,R)
     OE = babyOD2(rvec2, rvecdot,t)
-    dec2, ra2 = ephemeris2(OE[0],OE[1],OE[2],OE[3],OE[4],OE[5],t0,t,R)
+    dec2, ra2 = ephemeris2(OE[0],OE[1],OE[2],OE[3],OE[4],OE[5],t0,t,R)    
     return (ra1 - ra2)/(2*delta), (dec1 - dec2)/(2*delta)
 
 #returns partial of RA and DEC in respect to Z    
@@ -63,10 +63,10 @@ def getdRAdZ(rvec, rvecdot, R, delta,t,t0):
     dec1, ra1 = ephemeris2(OE[0],OE[1],OE[2],OE[3],OE[4],OE[5],t0,t,R)
     OE = babyOD2(rvec2, rvecdot,t)
     dec2, ra2 = ephemeris2(OE[0],OE[1],OE[2],OE[3],OE[4],OE[5],t0,t,R)
+
     return (ra1 - ra2)/(2*delta), (dec1 - dec2)/(2*delta)
 
-#returns partial of RA and DEC in respect to X dot   
-    
+#returns partial of RA and DEC in respect to X dot       
 def getdRAdXdot(rvec, rvecdot, R, delta,t,t0):
     rvecdot = list(rvecdot)
 
@@ -78,9 +78,9 @@ def getdRAdXdot(rvec, rvecdot, R, delta,t,t0):
     dec1, ra1 = ephemeris2(OE[0],OE[1],OE[2],OE[3],OE[4],OE[5],t0,t,R)
     OE = babyOD2(rvec, rvecdot2,t)
     dec2, ra2 = ephemeris2(OE[0],OE[1],OE[2],OE[3],OE[4],OE[5],t0,t,R)
+
     return (ra1 - ra2)/(2*delta), (dec1 - dec2)/(2*delta)
-#returns partial of RA and DEC in respect to Y dot
-    
+#returns partial of RA and DEC in respect to Y dot   
 def getdRAdYdot(rvec, rvecdot, R, delta,t,t0):
     rvecdot = list(rvecdot)
     rvecdot1 = rvecdot[:]
@@ -92,10 +92,11 @@ def getdRAdYdot(rvec, rvecdot, R, delta,t,t0):
    
     OE = babyOD2(rvec, rvecdot2,t)
     dec2, ra2 = ephemeris2(OE[0],OE[1],OE[2],OE[3],OE[4],OE[5],t0,t,R)
+
+
     return (ra1 - ra2)/(2*delta), (dec1 - dec2)/(2*delta)
 
 #returns partial of RA and DEC in respect to Z dot   
-    
 def getdRAdZdot(rvec, rvecdot, R, delta,t,t0):
     rvecdot = list(rvecdot)
     rvecdot1 = rvecdot[:]
@@ -114,22 +115,18 @@ def correct(rvec, rvecdot, R, delta,t,t0):
     rvec  = list(rvec)
     for i in range(len(t)):
         OE = babyOD2(rvec, rvecdot,t[i])
-
+        
         DECfit,RAfit = ephemeris2(OE[0],OE[1],OE[2],OE[3],OE[4],OE[5],t0,t[i],R[i])
-        print("DECFIT: ", DECfit)
-        print("OBS DEC : ", dec[i])
-        print("RAFIT: ", RAfit)
-        print("OBS RA : ", ra[i])
+       
         parX.extend(getdRAdX(rvec,rvecdot,R[i],delta,t[i],t0))
         parY.extend(getdRAdY(rvec,rvecdot,R[i],delta,t[i],t0))
         parZ.extend(getdRAdZ(rvec,rvecdot,R[i],delta,t[i],t0))
-        parXdot.extend(getdRAdYdot(rvec,rvecdot,R[i],delta,t[i],t0))
+        parXdot.extend(getdRAdXdot(rvec,rvecdot,R[i],delta,t[i],t0))
         parYdot.extend(getdRAdYdot(rvec,rvecdot,R[i],delta,t[i],t0))
         parZdot.extend(getdRAdZdot(rvec,rvecdot,R[i],delta,t[i],t0))
         
-        deltas.extend([abs(dec[i] - DECfit),abs(ra[i] - RAfit)])
+        deltas.extend([abs(ra[i] - RAfit),abs(dec[i] - DECfit)])
     
-    print("Deltas: ", deltas)
     masterArr = [[parX, parY,parZ, parXdot, parYdot,parZdot],
                  [parX, parY,parZ, parXdot, parYdot,parZdot],
                  [parX, parY,parZ, parXdot, parYdot,parZdot],
@@ -145,15 +142,12 @@ def correct(rvec, rvecdot, R, delta,t,t0):
                   [parZdot]]
     for i in range(6):
         for j in range(6):
-            masterArr[i][j] = np.dot(masterArr[i][j], partialArr[i][0])
-    print(masterArr[0][0])
-        
+            masterArr[i][j] = np.dot(masterArr[i][j], partialArr[i][0])        
     for i in range(6):
         partialArr[i][0] = np.dot(partialArr[i][0],deltas)
     
         
-    finalArr = np.multiply(partialArr, masterArr)
-    xyzArr = np.matmul(np.linalg.pinv(finalArr),partialArr)
+    xyzArr = np.matmul(np.linalg.pinv(masterArr),partialArr)
     return xyzArr
 
 
@@ -177,21 +171,16 @@ def diffcorrect(starterfile):
         R[i] = [[R[i][0]],
              [R[i][1]],
              [R[i][2]]]
-
-
-
     RMS1 = RMS(r2,r2dot,R,t,t0)
-
     xyzArr = correct(r2,r2dot,R,10E-4,t,t0)
-    
-    for i in range(3):
-        r2[i] += xyzArr[i][0]
-    for i in range(3,6):
-        r2dot[i-3]+=xyzArr[i][0]
-
+    r2[0] += xyzArr[0][0]
+    r2[1] += xyzArr[1][0]
+    r2[2] += xyzArr[2][0]
+    r2dot[0] += xyzArr[0][0]
+    r2dot[1] += xyzArr[1][0]
+    r2dot[2] += xyzArr[2][0]
     RMS2 = RMS(r2,r2dot,R,t,t0)
     a,e,i,o,w,M,MP = babyOD3(r2, r2dot, t0)
-
     print("*****NEW ORBITAL ELEMENTS*******" )
     print("a = ", a)
     print("e = ", e)
@@ -200,11 +189,7 @@ def diffcorrect(starterfile):
     print("w = ", w)
     print("M = ",M)
     print("PrecessedM = ", MP)
-
-
-    
-    
-    
+    print("********************************")
     print("RMS1: ", RMS1)
     print("RMS2: ", RMS2)
     
@@ -215,8 +200,9 @@ def RMS(r2, r2dot,R,t,t0):
     r2 = list(r2)
     r2dot = list(r2dot)
     for i in range(len(t)):
-        OE = babyOD2(r2, r2dot,t[i])
-        DECfit,RAfit = ephemeris2(OE[0],OE[1],OE[2],OE[3],OE[4],OE[5],t0,t[i],R[i])
+        OE = babyOD2(r2, r2dot,t[i])        
+        a,e,I,o,w,M,MP = babyOD3(r2, r2dot, t[i])       
+        DECfit,RAfit = ephemeris2(OE[0],OE[1],OE[2],OE[3],OE[4],OE[5],t0,t[i],R[i])    
         deltalist.extend([abs(ra[i] - RAfit), abs(dec[i] - DECfit)])
     return sqrt(np.dot(deltalist,deltalist)/(len(t)*2-6))
     

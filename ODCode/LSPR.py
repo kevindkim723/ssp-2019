@@ -1,6 +1,11 @@
 import numpy as np
 import math
-#helper methods to help with number conversion
+
+##Least Squares Plate Reduction program, a form of statistical regression that takes
+##in celestial and plate coordinates of several reference stars in a frame
+##in order to calculate a regression that will output the celestial coordinates
+##of the asteroid, in which its plate constants are also entered.
+
 def RAtoDegree(sRA):
     sDeg = 0
     arr = sRA.split(":")
@@ -116,6 +121,15 @@ def LSPR(filename, x, y):
     print(uncertaintyD)
     return b1,b2,a11,a12,a21,a22,RA,D,uncertaintyRA,uncertaintyD
 
+#LSPR2 takes in arrays of celestial coordinates and plate constants
+#this is used in the astronmetry code
+#arRA: right acensions of reference stars
+#arrD: declinations of reference stars
+#arrX: x coordinates of reference stars
+#arrY: y coordinates of reference stars
+#x: x coordinate of the asteroid
+#y: y coordinate of the asteroid
+#outputs the RA and DEC of the asteroid (celestial coordaintes) through LSPR
 def LSPR2(arrRA, arrD, arrX, arrY,x,y):
     #converting to numpy
     arrX = np.array(arrX,dtype=float)

@@ -1,9 +1,11 @@
 from math import *
 import numpy as np
 from BabyOD import *
-
+#Method of Gauss for preliminary orbit determination with fourth order taylor polynomials
+#constants
 EPSILON = radians(23.4358)
 C = 173.145
+#helper method to convert every element in array into degrees
 def arrDeg(x):
     b = list.copy(x)
     for i in range(len(b)):
@@ -12,7 +14,6 @@ def arrDeg(x):
 
 
 #converts into julian date
-
 def convertJulian(year, month, date, hour, minute, second):
     year = float(year)
     month = float(month)
@@ -31,6 +32,7 @@ def ecliptic(x):
                           [0,cos(EPSILON), sin(EPSILON)],
                           [0,-sin(EPSILON), cos(EPSILON)]])
     return np.dot(transform, x)
+
 #helper method to convert right acension into decimal degree
 def RAtoDegree(sRA):
     sDeg = 0
@@ -93,7 +95,7 @@ D31 = 0
 D32 = 0
 D33 = 0
 
-
+#parses file input into the global arrays
 def feed(starterfile):
     global ra, dec,t,R
     for line in open(starterfile,'r'):
@@ -107,7 +109,7 @@ def feed(starterfile):
         dec.append(radians(DtoDegree(arrline[5])))
         R.append((np.array([float(arrline[6]),float(arrline[7]),float(arrline[8])])))
            
-
+# scalar equation of lagrange and method of gauss preliminaries
 def findroots(i):
     i = int(i)
     global D0,D11,D12,D13,D21,D22,D23,D31,D32,D33,rho1hat,rho2hat,rho3hat
